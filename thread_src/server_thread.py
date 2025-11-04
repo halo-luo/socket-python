@@ -10,14 +10,16 @@ def handle_thread_server(server_client_socket, shutdown_event):
         if len(recv_content) == 0:
             break
 
+        if recv_content == 'shutdown' or recv_content == 'poweroff':
+            shutdown_event.set()
+            server_client_socket.send("服务器即将关闭".encode('gbk'))
+            break
+
         recv_content = "收到：" + recv_content
         recv_content = recv_content.encode('gbk')
         server_client_socket.send(recv_content)
 
-        if recv_content == 'shutdown' or recv_content == 'poweroff':
-            # shutdown_event.set()
-            shutdown_event = False
-            break
+
         
     server_client_socket.close()
 
@@ -27,11 +29,9 @@ def server_thread():
     server_socket.bind(("0.0.0.0", 65500))
     server_socket.listen(64)
     global shutdown_event
-    shutdown_event = True
-    # shutdown_event = threading.Event()
-    # server_socket.setblocking(False)
+    shutdown_event = threading.Event()
 
-    while shutdown_event:
+    while not shutdown_event.is_set():
 
         server_client_socket, client_port = server_socket.accept()
         print(f"客户端连接成功{client_port}")
