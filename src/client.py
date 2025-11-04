@@ -9,8 +9,9 @@ def client():
             
             send_data = ipt.encode('gbk')
             client_socket.send(send_data)
-            
-            if ipt == "q":
+
+            # 更换为shutdown关闭服务器
+            if ipt == "shutdown":
                 break
 
             recv_data = client_socket.recv(1024)
