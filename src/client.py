@@ -2,8 +2,8 @@ import socket
 
 def client():
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    # client_socket.connect(('127.0.0.1', 65500))
-    client_socket.connect(('192.168.1.16', 65500))
+    client_socket.connect(('127.0.0.1', 65500))
+    # client_socket.connect(('192.168.1.16', 65500))
     while True:
         ipt = input()
         if len(ipt) > 0:
