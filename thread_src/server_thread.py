@@ -1,10 +1,8 @@
 import socket
 import threading
 
-global shutdown_event
 
-
-def handle_thread_server(server_client_socket, shutdown_event):
+def handle_thread_server(server_client_socket, server_socket):
     while True:
         recv_data = server_client_socket.recv(1024)
         recv_content = recv_data.decode('gbk')
@@ -13,8 +11,8 @@ def handle_thread_server(server_client_socket, shutdown_event):
             break
 
         if recv_content == 'shutdown' or recv_content == 'poweroff':
-            shutdown_event.set()
-            server_client_socket.send("服务器即将关闭".encode('gbk'))
+            server_client_socket.send("服务器收到关闭信息".encode('gbk'))
+            server_socket.close()
             break
 
         recv_content = "收到：" + recv_content
@@ -29,17 +27,21 @@ def server_thread():
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
     server_socket.bind(("0.0.0.0", 65500))
     server_socket.listen(64)
-    shutdown_event = threading.Event()
 
-    while not shutdown_event.is_set():
-        server_client_socket, client_port = server_socket.accept()
-        print(f"客户端连接成功{client_port}")
+    while True:
+        try:
+            # 卡在了这里
+            server_client_socket, client_port = server_socket.accept()
+            print(f"客户端连接成功{client_port}")
+            thread_server = threading.Thread(
+                target=handle_thread_server,
+                args=(server_client_socket, server_socket))
+            thread_server.daemon = True
+            thread_server.start()
 
-        thread_server = threading.Thread(
-            target=handle_thread_server,
-            args=(server_client_socket, shutdown_event))
-        thread_server.daemon = True
-        thread_server.start()
+        except OSError:
+            print("服务器已关闭")
+            break
 
 
 if __name__ == "__main__":

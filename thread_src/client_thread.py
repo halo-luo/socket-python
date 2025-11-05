@@ -1,10 +1,16 @@
 import socket
 import threading
+import sys
+
+sys.path.append('..')
 from src.client import client
 
 
 def client_thread():
-    client()
+    try:
+        client()
+    except ConnectionAbortedError:
+        print("已与服务器断开连接")
 
 
 if __name__ == "__main__":
