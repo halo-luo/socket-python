@@ -1,5 +1,6 @@
 import socket
 
+
 def server():
     # 创建socket
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -9,7 +10,7 @@ def server():
     server_client_socket, client_port = server_socket.accept()
     print(f"客户端连接成功{client_port}")
     while True:
-        
+
         recv_data = server_client_socket.recv(1024)
         recv_content = recv_data.decode("gbk")
         if len(recv_content) > 0:
@@ -22,7 +23,7 @@ def server():
             recv_content = "已收到：" + recv_content
             recv_content = recv_content.encode('gbk')
         server_client_socket.send(recv_content)
-    
+
     server_client_socket.close()
     server_socket.close()
 

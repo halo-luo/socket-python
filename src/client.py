@@ -1,5 +1,6 @@
 import socket
 
+
 def client():
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client_socket.connect(('127.0.0.1', 65500))
@@ -7,7 +8,7 @@ def client():
     while True:
         ipt = input()
         if len(ipt) > 0:
-            
+
             send_data = ipt.encode('gbk')
             client_socket.send(send_data)
 
